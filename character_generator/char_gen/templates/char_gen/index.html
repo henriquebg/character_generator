@@ -1,0 +1,89 @@
+{% load static %}
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8">
+
+  <title>Character Generator</title>
+  <meta name="description" content="Character Generator">
+  <meta name="author" content="Henrique Buzeto Galati">
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css">
+  <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.0-rc2/css/bootstrap-glyphicons.css">
+  <link rel="stylesheet" href='{% static "char_gen/css/styles.css" %}'>
+
+  <!--[if lt IE 9]>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.js"></script>
+  <![endif]-->
+</head>
+<body>
+<div class="container">         
+    <div class="price-box">
+        <h4>Selecione o spritesheet para upload</h4>
+        <form method="post" enctype="multipart/form-data" action='{% url "imagens" %}' class="form-horizontal form-pricing" role="form">
+            {% csrf_token %}
+            <div class="form-group" style="margin : 20px" >
+                <div class="col-sm-12" >
+                    <input type="file" name="imagem" />
+					<span style="margin-left:20px;color:blue;cursor:help;" data-toggle="tooltip" data-placement="top" title="Selecione o spritesheet a ser usado (matriz de imagens)">?</span>
+                </div>
+            </div>
+            <div class="form-group" style="margin : 20px" >
+                <div class="col-sm-12">
+                    <label for="largura">Largura</label><span style="margin-left:20px;color:blue;cursor:help;" data-toggle="tooltip" data-placement="top" title="Esta é a largura de cada imagem a ser recortada do spritesheet">?</span>
+                    <input type="number" class="form-control" id="largura" name="largura" min="1">
+                </div>
+            </div>
+            <div class="form-group" style="margin : 20px">
+                <div class="col-sm-12">
+                    <label for="altura" >Altura</label><span style="margin-left:20px;color:blue;cursor:help;" data-toggle="tooltip" data-placement="top" title="Esta é a altura de cada imagem a ser recortada do spritesheet">?</span>
+                    <input type="number" class="form-control" id="altura" name="altura"min="1">
+                </div>
+            </div>
+            <div class="form-group" style="margin : 20px">
+                <div class="col-sm-12">
+                    <label for="escala">Escala de entrada</label><span style="margin-left:20px;color:blue;cursor:help;" data-toggle="tooltip" data-placement="top" title="Esta é a escala pela qual as imagens serão multiplicadas antes do cruzamento. Esta escala afetará diretamente o resultado do cruzamento.">?</span>
+                    <input type="number" class="form-control" id="escala-entrada" name="escala-entrada" min="1" max="5">
+                </div>
+            </div>
+            <div class="form-group" style="margin : 20px">
+                <div class="col-sm-12">
+                    <label for="escala">Escala de saída</label><span style="margin-left:20px;color:blue;cursor:help;" data-toggle="tooltip" data-placement="top" title="Esta é a escala pela qual as imagens serão multiplicadas após o cruzamento. Esta escala não interferem em nada no cruzamento.">?</span>
+                    <input type="number" class="form-control" id="escala-saida" name="escala-saida" min="1" max="5">
+                </div>
+            </div>
+            <div class="form-group" style="margin : 20px">
+                <div class="col-sm-12">
+                    <label for="escala">Número de Gerações</label><span style="margin-left:20px;color:blue;cursor:help;" data-toggle="tooltip" data-placement="top" title="Esta é o número de gerações que o algoritmo irá iterar os cruzamentos. Quanto maior o número, mais tempo levará para gerar o resultado.">?</span>
+                    <input type="number" class="form-control" id="num-geracoes" name="num-geracoes" min="1" max="20">
+                </div>
+            </div>
+            <div class="price-slider" style="margin : 50px">
+                <h4 class="great">Tamanho mínimo da secção</h4><span style="margin-left:20px;color:blue;cursor:help;" data-toggle="tooltip" data-placement="top" title="Esta é o tamanho mínimo da secção que o algoritmo usará na troca de informações entre as imagens no cruzamento. Quanto menor o tamanho, mais ruidosas serão as imagens geradas, porém a variacão das imagens aumenta.">?</span>
+                <div class="col-sm-12">
+                    <div id="slider-sec-minima"></div>
+                    <input type="hidden" id="sec-minima" name="sec-minima" value="0.01">
+                </div>
+            </div>
+            <div class="price-slider" style="margin : 50px">
+                <h4 class="great">Tamanho máximo da secção</h4><span style="margin-left:20px;color:blue;cursor:help;" data-toggle="tooltip" data-placement="top" title="Esta é o tamanho mínimo da secção que o algoritmo usará na troca de informações entre as imagens no cruzamento. Quanto maior o tamanho, menos ruidosas serão as imagens geradas, porém a variacão das imagens diminui.">?</span>
+                <div class="col-sm-12">
+                    <div id="slider-sec-maxima"></div>
+                    <input type="hidden" id="sec-maxima" name="sec-maxima" value="0.25">
+                </div>
+            </div>
+            <div class="form-group" style="margin : 20px">                        
+                <div class="col-sm-12">
+                    <button type="submit" class="btn btn-primary btn-lg btn-block">Upload<span class="glyphicon glyphicon-chevron-right pull-right" style="padding-right: 10px;"></span></button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+<script src="https://code.jquery.com/ui/1.10.4/jquery-ui.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/js/bootstrap.min.js"></script>
+<script src='{% static "char_gen/js/main.js" %}'></script>
+</body>
+</html>

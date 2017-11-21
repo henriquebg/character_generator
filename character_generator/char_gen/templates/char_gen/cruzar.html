@@ -1,0 +1,134 @@
+{% load static %}
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8">
+
+  <title>Character Generator</title>
+  <meta name="description" content="Character Generator">
+  <meta name="author" content="Henrique Buzeto Galati">
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css">
+  <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.0-rc2/css/bootstrap-glyphicons.css">
+  <link rel="stylesheet" href='{% static "char_gen/css/cruzar.css" %}'>
+  <link rel="stylesheet" href='{% static "char_gen/css/styles.css" %}'>
+</head>
+<body>
+<div class="container">
+    <div id="cruzando" class="cruzando">
+        <div class="price-box" style="padding : 40px 50px; width : auto">
+            <div id="loader" class="loader"></div>
+            <h4 style="margin-top : 50px;">Aguarde enquanto o cruzamento é realizado...</h4>
+        </div>
+    </div>
+    <div id="pagina">
+        <div class="price-box" style="padding : 40px 50px; width : auto">
+            <h4>Clique com o botão direito na imagem e clique em Salvar Imagem Como...</h4>
+            <form method="get" action='/char_gen/nova_sessao' class="form-horizontal form-pricing" role="form">
+                <div id="row-imagens" class="row" style="margin-right : 0px; margin-left : -28px"> 
+                </div>
+                <div class="form-group" style="margin-top : 50px">                        
+                    <div class="col-sm-12">
+                        <button type="submit" class="btn btn-primary btn-lg btn-block"><span class="glyphicon glyphicon-chevron-left pull-left" style="padding-right: 10px;"></span>Refazer</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+<script src="https://code.jquery.com/ui/1.10.4/jquery-ui.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/js/bootstrap.min.js"></script>
+<script src='{% static "char_gen/js/jquery.cookie.js" %}'></script>
+<script>
+
+is_cruzando = true;
+
+$(document).ready(function() 
+{
+    var csrftoken = $.cookie('csrftoken');
+    $('#pagina').hide();
+
+    window.setInterval(function()
+    {
+        if (is_cruzando)
+        {
+            $.ajax(
+            {
+                type: 'GET',
+                url: '{% url "is_cruzando" %}',
+                success: function(msg)
+                {
+                    if (msg === '1')
+                    {
+                        $.ajax(
+                        {
+                            type: 'GET',
+                            url: '{% url "get_geradas" %}',
+                            success: function(imagens)
+                            {
+                                var imagens_dir = imagens.split(',');
+                                html = '';
+                                imagens_dir.forEach(function(item, index)
+                                {
+                                    html += '<div class="col-sm-4 col-md-2 col-lg-2">';
+                                    html += '<img src="' + item + '"/>';
+                                    html += '</div>';
+                                });
+                                
+                                $('#row-imagens').append(html);
+                                $('#cruzando').fadeOut();
+                                $('#pagina').delay(1000).fadeIn();
+                            },
+                            error: function()
+                            {
+                                alert("Ocorreu um erro no servidor, tente novamente em breve.");
+                            }
+                        });
+
+                        is_cruzando = false;
+                    }
+                },
+                error: function()
+                {
+                    alert("Ocorreu um erro no servidor, tente novamente em breve.");
+                }
+            });
+        }
+    }, 1000);
+
+    function csrfSafeMethod(method) 
+    {
+    // these HTTP methods do not require CSRF protection
+    return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+    }
+    function sameOrigin(url) {
+        // test that a given url is a same-origin URL
+        // url could be relative or scheme relative or absolute
+        var host = document.location.host; // host + port
+        var protocol = document.location.protocol;
+        var sr_origin = '//' + host;
+        var origin = protocol + sr_origin;
+        // Allow absolute or scheme relative URLs to same origin
+        return (url == origin || url.slice(0, origin.length + 1) == origin + '/') ||
+            (url == sr_origin || url.slice(0, sr_origin.length + 1) == sr_origin + '/') ||
+            // or any other URL that isn't scheme relative or absolute i.e relative.
+            !(/^(\/\/|http:|https:).*/.test(url));
+    }
+    $.ajaxSetup({
+        beforeSend: function(xhr, settings) {
+            if (!csrfSafeMethod(settings.type) && sameOrigin(settings.url)) {
+                // Send the token to same-origin, relative URLs only.
+                // Send the token only if the method warrants CSRF protection
+                // Using the CSRFToken value acquired earlier
+                xhr.setRequestHeader("X-CSRFToken", csrftoken);
+            }
+        }
+    });
+});
+
+</script>
+</body>
+</html>

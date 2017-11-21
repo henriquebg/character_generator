@@ -1,0 +1,118 @@
+{% load static %}
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8">
+
+  <title>Character Generator</title>
+  <meta name="description" content="Character Generator">
+  <meta name="author" content="Henrique Buzeto Galati">
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css">
+  <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.0-rc2/css/bootstrap-glyphicons.css">
+  <link rel="stylesheet" href='{% static "char_gen/css/styles.css" %}'>
+</head>
+<body>
+<div class="container">
+  <div class="price-box" style="padding : 40px 50px; width : auto">
+    <h4>Selecione as imagens que deseja desconsiderar</h4>
+    <form method="post" action='' class="form-horizontal form-pricing" role="form">
+      {% csrf_token %}
+      <div class="row" style="margin-right : 0px; margin-left : -28px">
+          {% for imagem_url in imagens_url %}   
+          <div class="col-sm-4 col-md-2 col-lg-2">
+            <label class="btn btn-secondary btn-check">
+              <img src="{% static imagem_url %}" class="img-responsive img-check"/>
+              <input class="chk-selecionada" type="checkbox" name="chk_imagem" value={{ forloop.counter0 }} checked style="display : none">
+            </label>
+          </div>
+          {% endfor %}
+          <button id="btn_cruzar" type="button" class="btn btn-primary btn-lg btn-block">Cruzar<span class="glyphicon glyphicon-chevron-right pull-right" style="padding-right: 10px;"></span></button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+<script src="https://code.jquery.com/ui/1.10.4/jquery-ui.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/js/bootstrap.min.js"></script>
+<script src='{% static "char_gen/js/jquery.cookie.js" %}'></script>
+<script>
+$(document).ready(function() 
+{
+    var csrftoken = $.cookie('csrftoken');
+
+    $("#btn_cruzar").click(function(event) 
+    {
+        imagens_ignoradas = [];
+
+        $("input:checkbox:not(:checked)").each(function()
+        {
+            imagens_ignoradas.push($(this).val());
+        });
+
+        $.ajax(
+        {
+          type: 'POST',
+          url: '{% url "receber_ignoradas" %}',
+          data: {imagens_ignoradas: imagens_ignoradas.toString()},
+          success: function(msg)
+          {
+            if(msg === 'OK')
+            {
+              window.location.href = '{% url "cruzar" %}'
+            }  
+          },
+          error: function()
+          {
+              alert("Ocorreu um erro no servidor, tente novamente em breve.");
+          }
+        });
+    });
+
+    $(".btn-check").click(function(event) 
+    {
+        if ($(this).find("input").prop("checked"))
+        {
+            $(this).attr('class', 'btn btn-secondary');
+        }
+        else
+        {
+            $(this).attr('class', 'btn btn-danger');
+        } 
+    });
+
+    function csrfSafeMethod(method) 
+    {
+    // these HTTP methods do not require CSRF protection
+    return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+    }
+    function sameOrigin(url) {
+        // test that a given url is a same-origin URL
+        // url could be relative or scheme relative or absolute
+        var host = document.location.host; // host + port
+        var protocol = document.location.protocol;
+        var sr_origin = '//' + host;
+        var origin = protocol + sr_origin;
+        // Allow absolute or scheme relative URLs to same origin
+        return (url == origin || url.slice(0, origin.length + 1) == origin + '/') ||
+            (url == sr_origin || url.slice(0, sr_origin.length + 1) == sr_origin + '/') ||
+            // or any other URL that isn't scheme relative or absolute i.e relative.
+            !(/^(\/\/|http:|https:).*/.test(url));
+    }
+    $.ajaxSetup({
+        beforeSend: function(xhr, settings) {
+            if (!csrfSafeMethod(settings.type) && sameOrigin(settings.url)) {
+                // Send the token to same-origin, relative URLs only.
+                // Send the token only if the method warrants CSRF protection
+                // Using the CSRFToken value acquired earlier
+                xhr.setRequestHeader("X-CSRFToken", csrftoken);
+            }
+        }
+    });
+});
+
+</script>
+</body>
+</html>
