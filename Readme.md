@@ -1,5 +1,6 @@
 Sistema para geração de personagens baseado em sprites de input.
 Foi usada técnicas de cruzamento de cromossomos da área de algoritmos genéticos.
+Este sistema está sob a licença GPL v3.
 
 **====INSTRUÇÕES PARA A INSTALAÇÃO====**
 
