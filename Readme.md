@@ -1,4 +1,5 @@
-Sistema feito em Django como projeto da disciplina de Desenvolvimento de Projetos.
+Sistema para geração de personagens baseado em sprites de input.
+Foi usada técnicas de cruzamento de cromossomos da área de algoritmos genéticos.
 
 **====INSTRUÇÕES PARA A INSTALAÇÃO====**
 
