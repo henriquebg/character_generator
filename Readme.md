@@ -1,3 +1,5 @@
+Sistema feito em Django como projeto da disciplina de Desenvolvimento de Projetos.
+
 **====INSTRUÇÕES PARA A INSTALAÇÃO====**
 
 1) Instalar o Python 3, **preferencialmente na versão 3.4**.
@@ -9,4 +11,3 @@
 7) Se tudo correr bem, ele aparecerá uma mensagem que o servidor está rodando no endereço http://127.0.0.1:8000.
 8) Para encontrar o index deste sistema, entre em http://127.0.0.1:8000/char_gen.
 9) Use a imagem **imagem_teste_final_fantasy_6.png** disponibilizada para testar o sistema.
-10) Qualquer dúvida ou problema, favor entrar em contato em henriquebg89@outlook.com.
